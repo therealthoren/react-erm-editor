@@ -27,7 +27,6 @@
         "./dist"
     ],
     "scripts": {
-        "lint": "ts-standard -p ./tsconfig.json",
         "prebuild": "rimraf ./dist",
         "build": "rollup -c ./rollup.config.js",
         "test": "jest",

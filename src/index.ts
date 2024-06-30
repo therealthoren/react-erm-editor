@@ -1,7 +1,5 @@
-import {default as Editor} from '@matthewdowns/react-component-library-boilerplate/lib/Editor/Editor'
-
+import Editor from '@matthewdowns/react-component-library-boilerplate/lib/Editor/Editor'
 
 export {
   Editor
 }
-
