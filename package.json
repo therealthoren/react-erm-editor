@@ -1,0 +1,80 @@
+{
+    "name": "react-erm-editor",
+    "version": "1.0.0",
+    "description": "React component with the support of react-flow that allows you to create and edit ERM diagrams",
+    "keywords": [
+        "react",
+        "entity relationship model",
+        "diagram",
+        "editor",
+        "flowchart",
+        "react-flow",
+        "erm",
+        "erd"
+    ],
+    "license": "MIT",
+    "author": "Thoren Lederer",
+    "homepage": "https://github.com/therealthoren/react-erm-editor#readme",
+    "bugs": {
+        "url": "https://github.com/therealthoren/react-erm-editor/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/therealthoren/react-erm-editor.git"
+    },
+    "main": "dist/index.js",
+    "files": [
+        "./dist"
+    ],
+    "scripts": {
+        "lint": "ts-standard -p ./tsconfig.json",
+        "prebuild": "rimraf ./dist",
+        "build": "rollup -c ./rollup.config.js",
+        "test": "jest",
+        "dev": "rollup -c ./rollup.config.js -w"
+    },
+    "peerDependencies": {
+        "react": "^18.3.1",
+        "react-dom": "^18.2.0"
+    },
+    "dependencies": {
+        "classnames": "^2.3.1",
+      "reactflow": "11.10.4"
+    },
+    "devDependencies": {
+        "@rollup/plugin-node-resolve": "^13.3.0",
+        "@rollup/plugin-typescript": "^8.3.0",
+        "@testing-library/jest-dom": "^5.14.1",
+        "@testing-library/react": "^14.0.0",
+        "@types/jest": "^27.0.2",
+        "@types/node": "^16.11.1",
+        "@types/react": "^18.0.14",
+        "@types/react-dom": "^17.0.9",
+        "babel-loader": "^8.2.5",
+        "css-loader": "^6.4.0",
+        "jest": "^27.4.3",
+        "jest-transform-stub": "^2.0.0",
+        "less": "^4.1.2",
+        "less-loader": "^11.0.0",
+        "node-polyfill-webpack-plugin": "^1.1.4",
+        "postcss": "^8.3.9",
+        "rimraf": "^3.0.2",
+        "rollup": "^2.77.3",
+        "rollup-plugin-postcss": "^4.0.1",
+        "rollup-plugin-terser": "^7.0.2",
+        "style-loader": "^3.3.1",
+        "ts-jest": "^27.0.7",
+        "ts-loader": "^9.3.1",
+        "ts-standard": "^11.0.0",
+        "tsconfig-paths-webpack-plugin": "^3.5.1",
+        "typescript": "^4.7.4"
+    },
+    "ts-standard": {
+        "ignore": [
+            "/dist",
+            "/jest.setup.ts",
+            "/node_modules",
+            "/src/**/*.spec.tsx"
+        ]
+    }
+}
