@@ -1,0 +1,83 @@
+@import "reactflow/dist/style.css";
+
+.context-menu {
+  background: white;
+  border-style: solid;
+  box-shadow: 10px 19px 20px rgba(0, 0, 0, 10%);
+  position: absolute;
+  z-index: 10;
+}
+
+.context-menu button {
+  border: none;
+  display: block;
+  padding: 0.5em;
+  text-align: left;
+  width: 100%;
+}
+
+.context-menu button:hover {
+  background: white;
+}
+
+/** Table */
+
+.react-flow__node-table {
+  border-radius: 3px;
+  width: 250px;
+  font-size: 12px;
+  color: #222;
+  text-align: center;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #999;
+  background-color: white;
+  padding: 0;
+
+
+  .inner-container {
+    padding: 0;
+  }
+
+  .title {
+    font-size: 12px;
+    border-bottom: 1px solid #333;
+    width: 100%;
+    line-height: 1.9;
+    background: radial-gradient(circle at 12.3% 19.3%, rgb(85, 88, 218) 0%, rgb(95, 209, 249) 100.2%);
+    color: #fff;
+    font-weight: bold;
+    overflow: hidden;
+    padding-right: 10px;
+    padding-left: 10px;
+  }
+
+  .columns  {
+    .column {
+      overflow: hidden;
+      text-align: left;
+      position: relative;
+      width: 100%;
+      padding: 3px 10px;
+      &:nth-child(odd) {
+        background-color: #f9f9f9;
+      }
+      &:nth-child(even) {
+        background-color: #fff;
+      }
+
+      &:hover {
+        background-color: #f0f0f0;
+      }
+
+      .primary-key {
+        margin-left: 6px;
+        font-weight: bold;
+      }
+
+      .foreign-key {
+        font-weight: bold;
+      }
+    }
+  }
+}
