@@ -37,7 +37,7 @@
         "react-dom": "^18.2.0"
     },
     "dependencies": {
-      "reactflow": "11.10.4"
+      "reactflow": "11.11.4"
     },
     "devDependencies": {
         "@rollup/plugin-node-resolve": "^15.2.3",
