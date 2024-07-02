@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react'
+import React, {useCallback, useEffect, useRef, useState} from 'react'
 import IEditorProps from '@matthewdowns/react-component-library-boilerplate/lib/Editor/Editor.props'
 import {
   Background,
@@ -31,7 +31,7 @@ export const edgeTypes = {
 } satisfies EdgeTypes
 
 function Editor (props: IEditorProps) {
-  const [nodes, , onNodesChange] = useNodesState(props.nodes)
+  const [nodes, setNodes, onNodesChange] = useNodesState(props.nodes)
   const [edges, setEdges, onEdgesChange] = useEdgesState(props.edges)
   const onConnect: OnConnect = useCallback(
     (connection) => setEdges((edges) => addEdge(connection, edges)),
@@ -42,10 +42,38 @@ function Editor (props: IEditorProps) {
 
   const ref = useRef(null)
 
+  useEffect(() => {
+    if (props.onDiagramUpdate) {
+      props.onDiagramUpdate({
+        nodes,
+        edges
+      })
+    }
+  }, [nodes, edges]);
+
+  const onNodesChangeBefore = useCallback((nodes: any[]) => {
+    if (props.onNodesChanged && props.onNodesChanged(nodes) === false) {
+      return false;
+    }
+    onNodesChange(nodes)
+  }, [props.onNodesChanged, onNodesChange]);
+
+  const onEdgesChangeBefore = useCallback((edges: any[]) => {
+    if (props.onEdgesChanged && props.onEdgesChanged(edges) === false) {
+      return false;
+    }
+    onEdgesChange(edges)
+  }, [props.onEdgesChanged, onEdgesChange]);
+
   const onNodeContextMenu = useCallback(
     (event: any, node: any) => {
       // Prevent native context menu from showing
       event.preventDefault()
+      if (props.onNodeContextMenu)  {
+        if (!props.onNodeContextMenu(event, node)) {
+          return false;
+        }
+      }
 
       setMenu(null)
       setGlobalMenu(null)
@@ -69,6 +97,7 @@ function Editor (props: IEditorProps) {
 
   const onContextMenu = useCallback(
     (event: any) => {
+
       // Prevent native context menu from showing
       event.preventDefault()
 
@@ -102,11 +131,11 @@ function Editor (props: IEditorProps) {
     <ReactFlow
       nodes={nodes}
       nodeTypes={nodeTypes}
-      onNodesChange={onNodesChange}
+      onNodesChange={onNodesChangeBefore}
       edges={edges}
       ref={ref}
       edgeTypes={edgeTypes}
-      onEdgesChange={onEdgesChange}
+      onEdgesChange={onEdgesChangeBefore}
       onNodeContextMenu={onNodeContextMenu}
       onContextMenu={onContextMenu}
       onClick={onClickAnywhere}

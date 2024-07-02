@@ -1,6 +1,6 @@
 {
     "name": "react-erm-editor",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": "React component with the support of react-flow that allows you to create and edit ERM diagrams",
     "keywords": [
         "react",
