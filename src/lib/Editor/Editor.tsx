@@ -1,5 +1,5 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react'
-import IEditorProps from '@matthewdowns/react-component-library-boilerplate/lib/Editor/Editor.props'
+import React, {type MouseEvent as ReactMouseEvent, useCallback, useEffect, useRef, useState} from 'react'
+import IEditorProps from './Editor.props'
 import {
   Background,
   Controls,
@@ -7,7 +7,7 @@ import {
   ReactFlow,
   addEdge,
   useNodesState,
-  useEdgesState, EdgeTypes, OnConnect
+  useEdgesState, EdgeTypes, OnConnect, updateEdge
 } from 'reactflow'
 import { PositionLoggerNode } from './nodes/PositionLoggerNode'
 
@@ -15,10 +15,11 @@ import type { NodeTypes } from 'reactflow'
 
 import './Editor.less'
 import './reactflow.less'
-import ContextMenu from '@matthewdowns/react-component-library-boilerplate/lib/Editor/components/ContextMenu'
-import GlobalContextMenu
-  from '@matthewdowns/react-component-library-boilerplate/lib/Editor/components/GlobalContextMenu'
-import { TableNode } from '@matthewdowns/react-component-library-boilerplate/lib/Editor/nodes/TableNode'
+import GlobalContextMenu from './components/GlobalContextMenu'
+import ContextMenu from "./components/ContextMenu";
+import {TableNode} from "./nodes/TableNode";
+import EditEdgeModal from "./components/EditEdgeModal";
+import EditNodeModal from "./components/EditNodeModal";
 
 export const nodeTypes = {
   'position-logger': PositionLoggerNode,
@@ -31,14 +32,25 @@ export const edgeTypes = {
 } satisfies EdgeTypes
 
 function Editor (props: IEditorProps) {
-  const [nodes, setNodes, onNodesChange] = useNodesState(props.nodes)
+  const [nodes, setNodes, onNodesChange] = useNodesState(props.nodes as any[])
   const [edges, setEdges, onEdgesChange] = useEdgesState(props.edges)
+  const [showEditNodeModal, setShowEditNodeModal] = useState(null)
   const onConnect: OnConnect = useCallback(
-    (connection) => setEdges((edges) => addEdge(connection, edges)),
+    (connection) => {
+      if (props.onEdgesChanged && props.onEdgesChanged([{
+        ...connection,
+        type: "add"
+      }]) === false) {
+        return;
+      }
+      setEdges((edges) => addEdge(connection, edges))
+    },
     [setEdges]
   )
   const [menu, setMenu] = useState(null)
   const [globalMenu, setGlobalMenu] = useState(null)
+const [showEditEdgeModal, setShowEditEdgeModal] = useState(null)
+
 
   const ref = useRef(null)
 
@@ -50,6 +62,29 @@ function Editor (props: IEditorProps) {
       })
     }
   }, [nodes, edges]);
+
+  const updateNode = (oldNode: any, newNode: any) => {
+    if (props.onNodesChanged && props.onNodesChanged([{
+      ...oldNode,
+      ...newNode
+    }]) === false) {
+      return false;
+    }
+    if (newNode.id !== oldNode.id) {
+      setNodes((nodes) => nodes.map((n) => n.id === oldNode.id ? {...n, ...newNode} : n))
+    }
+    else {
+      setNodes((nodes) => nodes.map((n) => n.id === oldNode.id ? {...n, ...newNode} : n))
+    }
+
+  }
+
+  const showEditEdge = (edge: any) => {
+    if (props.onEdgeSelected) {
+      props.onEdgeSelected(edge)
+    }
+    setShowEditEdgeModal(JSON.parse(JSON.stringify(edge)));
+  }
 
   const onNodesChangeBefore = useCallback((nodes: any[]) => {
     if (props.onNodesChanged && props.onNodesChanged(nodes) === false) {
@@ -123,33 +158,87 @@ function Editor (props: IEditorProps) {
     setGlobalMenu(null)
   }, [setMenu, setGlobalMenu])
 
+  const onNodeClick = useCallback(() => {
+    setMenu(null)
+    setGlobalMenu(null)
+  }, [setMenu, setGlobalMenu])
+
+  const onNodeDoubleClick = useCallback((e: ReactMouseEvent,  node: any) => {
+    setMenu(null)
+    setGlobalMenu(null)
+    setShowEditNodeModal(node);
+  }, [setMenu, setGlobalMenu])
+
+  const onSelectionChange = useCallback((data: {nodes: any[], edges: any[]}) => {
+    if (data && data.edges.length === 0) {
+      setShowEditEdgeModal(null);
+    }
+    if (data && data.nodes.length === 1 && showEditNodeModal != null) {
+      setShowEditNodeModal(data.nodes[0]);
+    }
+    if (data && data.nodes.length === 0 ) {
+      setShowEditNodeModal(null);
+    }
+    if (data && data.edges.length === 1 && showEditEdgeModal != null) {
+      setShowEditEdgeModal(data.edges[0]);
+    }
+
+    setMenu(null)
+    setGlobalMenu(null)
+  }, [setMenu, setGlobalMenu, setShowEditEdgeModal])
+
+  const onEdgeDoubleClick = useCallback((e: ReactMouseEvent, edge: any) => {
+    e.preventDefault();
+    e.stopPropagation();
+    showEditEdge(edge);
+    setMenu(null)
+    setGlobalMenu(null)
+  }, [setMenu, setGlobalMenu])
+
+  const onEdgeContextMenu = useCallback(() => {
+    setMenu(null)
+    setGlobalMenu(null)
+  }, [setMenu, setGlobalMenu])
+
+
+
   // Close the context menu if it's open whenever the window is clicked.
   const onPaneClick = useCallback(() => setMenu(null), [setMenu])
 
+
   // The react flow editor
   return (
-    <ReactFlow
-      nodes={nodes}
-      nodeTypes={nodeTypes}
-      onNodesChange={onNodesChangeBefore}
-      edges={edges}
-      ref={ref}
-      edgeTypes={edgeTypes}
-      onEdgesChange={onEdgesChangeBefore}
-      onNodeContextMenu={onNodeContextMenu}
-      onContextMenu={onContextMenu}
-      onClick={onClickAnywhere}
-      onConnect={onConnect}
-      fitView
-    >
-      <Background />
-      <MiniMap />
-      <Controls />
+    <>
+      <ReactFlow
+        nodes={nodes}
+        nodeTypes={nodeTypes}
+        onNodesChange={onNodesChangeBefore}
+        onNodeClick={onNodeClick}
+        onNodeDoubleClick={onNodeDoubleClick}
+        onEdgeDoubleClick={onEdgeDoubleClick}
+        onEdgeContextMenu={onEdgeContextMenu}
+        onSelectionChange={onSelectionChange}
+        edges={edges}
+        ref={ref}
+        edgeTypes={edgeTypes}
+        onEdgesChange={onEdgesChangeBefore}
+        onNodeContextMenu={onNodeContextMenu}
+        onContextMenu={onContextMenu}
+        onClick={onClickAnywhere}
+        onConnect={onConnect}
+        fitView
+      >
+        <Background />
+        <MiniMap />
+        <Controls />
 
-      {globalMenu && <GlobalContextMenu onClick={onPaneClick} {...globalMenu as any}  />}
+        {globalMenu && <GlobalContextMenu onClick={onPaneClick} {...globalMenu as any}  />}
 
-      {menu && <ContextMenu onClick={onPaneClick} {...menu as any} />}
-    </ReactFlow>
+        {menu && <ContextMenu onClick={onPaneClick} {...menu as any} />}
+      </ReactFlow>
+      {showEditEdgeModal && <EditEdgeModal nodes={nodes} onEdgeChanged={(edge) => setEdges(updateEdge(showEditEdgeModal, edge, edges))} edge={showEditEdgeModal} />}
+      {showEditNodeModal && <EditNodeModal node={showEditNodeModal} onNodeChanged={(e, nb) => updateNode(e, nb)} nodes={nodes} />}
+    </>
   )
 }
 

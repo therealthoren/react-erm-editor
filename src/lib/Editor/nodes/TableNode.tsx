@@ -90,10 +90,12 @@ export function TableNode ({
                   marginRight: '10px'
 
                 }} position={Position.Right}
+                id={column.name}
+
                                                                  />}
               {isPrimaryKey(column) && <Handle
                 type='target'
-                id={constraint?.id}
+                id={column.name}
                 style={{
                   position: 'absolute',
                   transform: 'none',

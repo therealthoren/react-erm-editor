@@ -1,9 +1,23 @@
 import { ReactNode } from 'react'
 
+export interface IEditorNode {
+  id: string
+  type: string
+  data: any
+
+}
+
+export interface IEditorEdge {
+  id: string
+  source: string
+  target: string
+  animated: boolean
+}
+
 interface IEditorProps extends Partial<Omit<HTMLButtonElement, 'children'>> {
   children?: ReactNode
-  nodes: [],
-  edges: [],
+  nodes: IEditorNode[],
+  edges: IEditorEdge[],
   onNodesChanged?: (nodes: any) => boolean
   onEdgesChanged?: (edges: any) => boolean
   onNodeSelected?: (node: any) => void
