@@ -1,0 +1,69 @@
+
+
+.edit-modal-container {
+  position: fixed;
+  top: 0;
+  right: 100px;
+  width: 50%;
+  height: 100vh;
+  pointer-events: none;
+  background: transparent;
+  justify-content: end;
+  display: flex;
+  align-items: center;
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+
+    th {
+      text-align: left;
+      padding: 10px;
+      border-bottom: 1px solid #ccc;
+    }
+
+    td {
+      padding: 5px 5px 5px 5px;
+    }
+  }
+
+  input {
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+    font-size: 12px;
+  }
+
+
+  label {
+    font-size: 14px;
+    margin-bottom: 5px;
+  }
+
+
+  .modal_input_block {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+
+
+  }
+
+  & * {
+    pointer-events: auto;
+  }
+
+  & .edit-modal {
+    background: white;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    min-width: 500px;
+    max-height: 80vh;
+    min-height: 400px;
+    overflow: auto;
+    padding-bottom: 25px;
+
+  }
+}
